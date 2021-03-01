@@ -1,7 +1,4 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Form, Input, Button, Checkbox, Radio } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+
 
 export default function CMA() {
     return (
@@ -37,7 +34,7 @@ const NormalLoginForm = () => {
           },
         ]}
       >
-        <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" />
+        <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Please input email" />
       </Form.Item>
       <Form.Item
         name="password"
@@ -70,7 +67,7 @@ const NormalLoginForm = () => {
 };
 
 // const {  Radio  } = antd;
-
+let mountNode = document.getElementById('root');
 
 
 ReactDOM.render(

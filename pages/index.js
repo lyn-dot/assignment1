@@ -7,18 +7,12 @@ import 'antd/dist/antd.css';
 import axios from 'axios';
 import {AES} from 'crypto-js';
 
-function onChange(e) {
-console.log(`radio checked:${e.target.value}`);
-}
+
 
 const NormalLoginForm = () => {
-const onFinish = (values) => {
-  console.log('Received values of form: ', values);
+  const onFinish = (values) => {
+    console.log('Received values of form: ', values);
 };
-
-// updateUsername = (username) => {
-//   this.setState({username}, this.validateUsername)
-// }
 
 
 return (
@@ -31,41 +25,60 @@ return (
       marginTop: 80,
       maxHeight: "100%",
     }}
-  >
-    <h1 style={{width: "30%", textAlign: "center", margin: "20px"}}>Course Management Assistant</h1>
-    <Radio.Group onChange={onChange} defaultValue="a">
-      <Radio.Button value="a">Student</Radio.Button>
-      <Radio.Button value="b">Teacher</Radio.Button>
-      <Radio.Button value="c">Manager</Radio.Button>
-    </Radio.Group>
+  >  {/* block style  */}
+
+    <h1 
+      style={{width: "35%", textAlign: "center", margin: "10px"}}>
+      Course Management Assistant
+    </h1>
 
     <Form
       name="normal_login"
       className="login-form"
       initialValues={{
         remember: true,
-      }}
-      onFinish={values =>{
+        role: "student",
+        email: "",
+        password: "",
+      }} // initialize values;
+
+      // repetition, how to fix & integrate into the constant onFinish above?
+      onFinish={values =>{ 
         console.log (values); 
         axios
         .post('https://cms.chtoma.com/api/login',{
           ...values, 
+          // post values to server;
           password: AES.encrypt(values.password, 'cms').toString(),
+          // encrypt password;
         }) 
         .then((res) =>{
           localStorage.setItem('cms', res.data.data);
+          // store response data;
         })
         .catch((error) => {
           message.error('Please check your email or password');
         })
       }}
-      initialValues = {{
-        role: "student",
-        email: "",
-        password: "",
-      }}
-      style = {{width: "30%"}}
+      
+      style = {{width: "35%"}}
+      // form component style; 
     >
+
+      <Form.Item
+        name="role"
+        rules={[
+          {
+            required: true,
+          },
+        ]}
+      >
+        <Radio.Group>
+          <Radio.Button value="student">Student</Radio.Button>
+          <Radio.Button value="teacher">Teacher</Radio.Button>
+          <Radio.Button value="manager">Manager</Radio.Button>
+        </Radio.Group>
+      </Form.Item>
 
       <Form.Item
         name="email"
@@ -79,11 +92,14 @@ return (
           }
         ]}
       >
-        <Input prefix={<UserOutlined 
-        className="site-form-item-icon" />} 
+        <Input 
+        // what is UserOutline used for? * explore prefix; 
+        prefix={<UserOutlined className="site-form-item-icon" />} 
+        type="email"
         placeholder="Please input email" 
         />
       </Form.Item>
+
       <Form.Item
         name="password"
         rules={[
@@ -104,24 +120,32 @@ return (
           placeholder="Please input password"
         />
       </Form.Item>
-        <Form.Item name="remember" valuePropName="checked" noStyle>
-          <Checkbox>Remember me</Checkbox>
-        </Form.Item>
+
+      <Form.Item 
+        name="remember" 
+        valuePropName="checked" 
+        noStyle>
+        <Checkbox>Remember me</Checkbox>
+      </Form.Item>
         
 
       <Form.Item>
-        <Button type="primary" htmlType="submit" className="login-form-button">
-          Sign in
-        </Button>
+      <Button 
+        type="primary" 
+        htmlType="submit" 
+        className="login-form-button"
+        style={{width:"100%", margin:"25px auto"}}
+      >
+        Sign in
+      </Button>
         <br />
-        No account? <a href="">Sign up</a>
+        No account? 
+      <Link href="">Sign up</Link>
       </Form.Item>
     </Form>
   </div>
 );
 };
-
-// const {  Radio  } = antd;
 
 
 export default NormalLoginForm; 

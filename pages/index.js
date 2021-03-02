@@ -37,13 +37,16 @@ export default function Page() {
     >  
 
       <h1 
-        style={{width: "35%", textAlign: "center", margin: "10px"}}>
+        style={{
+          width: "35%", 
+          textAlign: "center", 
+          margin: "10px"
+        }}>
         Course Management Assistant
       </h1>
 
       <Form
         name="normal_login"
-        className="login-form"
         initialValues={{
           remember: true,
           role: "student",
@@ -53,7 +56,9 @@ export default function Page() {
 
         onFinish={onFinish}
 
-        style = {{width: "35%"}}
+        style = {{
+          width: "35%"
+        }}
       >
 
         <Form.Item
@@ -123,7 +128,10 @@ export default function Page() {
           <Button 
             type="primary" 
             htmlType="submit" 
-            style={{width:"100%", margin:"25px auto"}}
+            style={{
+              width:"100%", 
+              margin:"25px auto"
+            }}
           >
             Sign in
           </Button>
@@ -137,8 +145,4 @@ export default function Page() {
     </div>
   );
 };
-
-
-
-
 

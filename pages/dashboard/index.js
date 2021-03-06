@@ -32,7 +32,7 @@ export default function Page() {
   // };
 
 
-  // 1. 实现跳转回login页面
+
   const onClick = () => {
     axios
       .post('https://cms.chtoma.com/api/logout') 
@@ -133,7 +133,7 @@ export default function Page() {
                   <Popover 
                     content={
                     <div>
-                      <Link href='https://cms.chtoma.com/api/login' onClick={onClick}>Logout</Link>
+                      <Link href='http://localhost:3000/login' onClick={onClick}>Logout</Link>
                     </div>}
                     trigger="hover" 
                   ><UserOutlined 

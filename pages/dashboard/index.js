@@ -41,13 +41,6 @@ export default function Page() {
       })
   }
   
-
-  const hoverContent = <div><LogoutOutlined />logout</div>;
-  //2. 实现hover message display??
-  const handleHoverChange = (visible) => {
-    visible.preventDefault();
-    return ({hovered:visible});
-  }
   
 
 
@@ -134,24 +127,22 @@ export default function Page() {
                   </Badge>
               </Menu.Item>
 
-              <Menu.Item 
-              key="3" 
-              icon={<UserOutlined 
-              style={{ 
-                fontSize: '23px',
-                
-              }}/>}>
-                <Popover 
-                  content={hoverContent} 
-                  trigger="hover" 
-                  onVisibleChange={handleHoverChange}>
-                </Popover>
-                <Popover content={
-                  <div>
-                    <Link href='https://cms.chtoma.com/api/login' onClick={onClick}>Logout</Link>
-                  </div>}>
-                </Popover>
-
+              <Menu.Item
+                key="3" 
+                icon={
+                  <Popover 
+                    content={
+                    <div>
+                      <Link href='https://cms.chtoma.com/api/login' onClick={onClick}>Logout</Link>
+                    </div>}
+                    trigger="hover" 
+                  ><UserOutlined 
+                    style={{ 
+                      fontSize: '23px',
+                      
+                    }}/>
+                  </Popover>}
+              >
               </Menu.Item>
             </Menu>
           </Header>

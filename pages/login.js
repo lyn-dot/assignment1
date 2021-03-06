@@ -2,7 +2,6 @@ import React from 'react';
 import { Form, Input, Button, Checkbox, Radio, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-import 'antd/dist/antd.css';
 import axios from 'axios';
 import {AES} from 'crypto-js';
 
@@ -21,6 +20,7 @@ export default function Page() {
       })
       .catch((error) => {
         message.error('Please check your email or password');
+        // TODO: direct to dashboard 
       })
     }
 
@@ -43,7 +43,6 @@ export default function Page() {
 
       <Form
         name="normal_login"
-        className="login-form"
         initialValues={{
           remember: true,
           role: "student",

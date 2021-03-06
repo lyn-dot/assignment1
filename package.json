@@ -9,11 +9,19 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.5.0",
-    "antd": "^4.12.3",
+    "antd": "^4.13.0",
     "axios": "^0.21.1",
     "crypto-js": "^4.0.0",
+    "lodash": "^4.17.21",
     "next": "10.0.7",
-    "react": "17.0.1",
-    "react-dom": "17.0.1"
+    "react": "^17.0.1",
+    "react-dom": "17.0.1",
+    "react-icons": "^4.2.0",
+    "react-router-dom": "^5.2.0",
+    "react-sider": "^0.4.1"
+  },
+  "devDependencies": {
+    "@iconify-icons/ant-design": "^1.1.0",
+    "@iconify/react": "^1.1.4"
   }
 }

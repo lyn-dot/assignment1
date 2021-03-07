@@ -20,6 +20,20 @@ const { Header, Footer, Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
 export default function Page() {
+  const [collapsed, setCollapsed] = useState(false);
+  // state = {
+  //   collapsed: false,
+  // };
+
+  const toggleCollapsed = () => {
+    setCollapsed(!collapsed);
+  }
+
+  // toggleCollapsed = () => {
+  //   this.setState({
+  //     collapsed: !this.state.collapsed,
+  //   });
+  // };
   
   const onCollapse = (collapsed) => {
     this.setState({ collapsed });
@@ -40,22 +54,20 @@ export default function Page() {
         localStorage.removeItem('cms', res.data.data);
       })
   }
-  
-  
 
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-        <Sider trigger={null} collapsible onCollapse={onCollapse}>
+        <Sider trigger={null} collapsible collapsed={collapsed}>
           <div> </div>
           <div className="logo" /> 
-          <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" style={{height: 'auto'}} >
+          <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" style={{height: 'auto', justifyContent: 'space-between'}} >
 
             <Menu.Item key='1'>
              <Image
                 width={50}
                 height={45}
-                src={`/`}// 3. to input logo img url; 
+                src={`/`}// 1. to input logo img url; 
                 
               />
             </Menu.Item>
@@ -91,31 +103,17 @@ export default function Page() {
             <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
               <Menu.Item 
                 key="1" 
-                icon={<MenuFoldOutlined 
-                    style={{ 
-                      fontSize: '23px',
-                      display: 'inline', 
-                      flexDirection: 'row',
-                      position: '0px 16px',
-                      alignItems: 'right',
-                      padding: '20px 100px',
-                      cursor: 'grab',
-
-                    }}
-                    // 4. 实现toggle成MenuUnfoldOutlined 图标 + menufold时的expand submenu items？
-                    // className="trigger"
-                    // type={{onCollapse} ? 'menu-unfold' : 'menu-fold'}
-                    // onClick={toggle}
-                  />}>
-                        
+                icon={collapsed ? <MenuFoldOutlined 
+                    // 2. 实现toggle成MenuUnfoldOutlined 图标 + menufold时的expand submenu items？
+                  /> : <MenuUnfoldOutlined />}
+                  
+                onClick={toggleCollapsed}
+                  > 
               </Menu.Item>
 
               <Menu.Item 
                 key="2" 
                 icon={<BellOutlined 
-                style={{ 
-                  fontSize: '23px', 
-                }}
                 />}>
                   <Badge 
                    size='small' 
@@ -133,14 +131,10 @@ export default function Page() {
                   <Popover 
                     content={
                     <div>
-                      <Link href='http://localhost:3000/login' onClick={onClick}>Logout</Link>
+                      <Link href='/login' onClick={onClick}>Logout</Link>
                     </div>}
                     trigger="hover" 
-                  ><UserOutlined 
-                    style={{ 
-                      fontSize: '23px',
-                      
-                    }}/>
+                  ><UserOutlined />
                   </Popover>}
               >
               </Menu.Item>
@@ -164,4 +158,4 @@ export default function Page() {
 
 
 
-//5. component Header style
+//3. component Header style

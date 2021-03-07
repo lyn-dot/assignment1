@@ -7,7 +7,7 @@ import {AES} from 'crypto-js';
 
 
 
-export default function Page() {
+export default function loginPage() {
   const onFinish = (values) => {
       axios
       .post('https://cms.chtoma.com/api/login',{
@@ -37,11 +37,7 @@ export default function Page() {
     >  
 
       <h1 
-        style={{
-          width: "35%", 
-          textAlign: "center", 
-          margin: "10px"
-        }}>
+        style={{width: "35%", textAlign: "center", margin: "10px"}}>
         Course Management Assistant
       </h1>
 
@@ -56,9 +52,7 @@ export default function Page() {
 
         onFinish={onFinish}
 
-        style = {{
-          width: "35%"
-        }}
+        style = {{width: "35%"}}
       >
 
         <Form.Item
@@ -128,12 +122,9 @@ export default function Page() {
           <Button 
             type="primary" 
             htmlType="submit" 
-            style={{
-              width:"100%", 
-              margin:"25px auto"
-            }}
+            style={{width:"100%", margin:"25px auto"}}
           >
-            Sign in
+            <Link href='/dashboard'>Sign in</Link>
           </Button>
           <div>
             <span>No account? </span>
@@ -145,4 +136,8 @@ export default function Page() {
     </div>
   );
 };
+
+
+
+
 

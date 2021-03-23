@@ -1,6 +1,7 @@
 import Link from "next/link";
+import {useRouter} from "next/router";
 import React, { useState } from "react";
-import { Badge, Image, Layout, Menu, Breadcrumb, Popover } from "antd";
+import {Badge, Image, Layout, Menu, Breadcrumb, Popover } from "antd";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -12,9 +13,11 @@ import {
   BellOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
+import studentList from "./student"; 
 
 const { Header, Footer, Content, Sider } = Layout;
 const { SubMenu } = Menu;
+
 
 export default function Page() {
   const [collapsed, setCollapsed] = useState(false);
@@ -25,6 +28,9 @@ export default function Page() {
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
+
+  const router = useRouter(); 
+  
 
   // toggleCollapsed = () => {
   //   this.setState({
@@ -42,9 +48,11 @@ export default function Page() {
     axios.post("https://cms.chtoma.com/api/logout").then(() => {
       localStorage.removeItem("cms", res.data.data);
     });
+    router.push('/login');
   };
 
   return (
+  <>
     <Layout style={{ minHeight: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div> </div>
@@ -59,7 +67,7 @@ export default function Page() {
             <Image
               width={50}
               height={45}
-              src={`/`} // 1. to input logo img url;
+              src={`/`} // to input logo img url;
             />
           </Menu.Item>
           <Menu.Item key="2" icon={<PieChartOutlined />}>
@@ -122,8 +130,9 @@ export default function Page() {
                 <Popover
                   content={
                     <div>
-                      <Link href="/login" onClick={onClick}>
-                        Logout
+                      <LogoutOutlined size='small'/>
+                      <Link href='/login'>
+                        <span onclick={onClick}>Logout</span>
                       </Link>
                     </div>
                   }
@@ -141,13 +150,14 @@ export default function Page() {
             <Breadcrumb.Item>CMS MANAGER SYSTEM</Breadcrumb.Item>
             <Breadcrumb.Item>Overview</Breadcrumb.Item>
           </Breadcrumb>
+           {/* when onclick sidebar, display studentlist   */}
           <div> TODO</div>
         </Content>
 
         <Footer style={{ textAlign: "center" }}>Copyright ©2018 CMS</Footer>
       </Layout>
     </Layout>
+  
+  </>
   );
 }
-
-//3. component Header style

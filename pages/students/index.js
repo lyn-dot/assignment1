@@ -45,12 +45,11 @@ export default function studentList() {
 
   const Search = Input;
 
-  // 仍然无法显示学生数据；
   const columns = [
     {
+      // 显示数据列号
       title: "No.",
       dataIndex: "number",
-      // 显示数据列号
     },
     {
       title: "Name",
@@ -129,6 +128,7 @@ export default function studentList() {
           type="primary"
           prefix={<PlusOutlined />}
           // on click 'Add' button, alert form-增加、编辑学生功能;
+          //删除学生功能及接口
           onClick={() => {
             <Form>
               <fieldset>

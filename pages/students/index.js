@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Table, Space, Input } from "antd";
+import { Form, Button, Table, Space, Input } from "antd";
 import { formatDistanceToNow } from "date-fns";
 import { debounce } from "lodash";
 import axios from "axios";
@@ -129,7 +129,30 @@ export default function studentList() {
         <Button
           type="primary"
           // on click 'Add' button, alert form-增加、编辑学生功能;
-          //onClick = {() => {}
+          onClick={() => {
+            <Form>
+              <Form.Item name="name">
+                <Input
+                  prefix={"Name"}
+                  type="text"
+                  placeholder="Please input name"
+                />
+              </Form.Item>
+              <Form.Item name="email">
+                <Input
+                  prefix={"Email"}
+                  type="email"
+                  placeholder="Please input email"
+                />
+              </Form.Item>
+              <Form.Item name="area">
+                <Input prefix={"Area"} type="text" placeholder="" />
+              </Form.Item>
+              <Form.Item name="studentType">
+                <Input prefix={"Student Type"} type="text" placeholder="" />
+              </Form.Item>
+            </Form>;
+          }}
         >
           Add
         </Button>

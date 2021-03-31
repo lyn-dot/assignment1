@@ -1,43 +1,40 @@
-import React from 'react';
-import { Form, Input, Button, Checkbox, Radio, message } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import Link from 'next/link';
-import axios from 'axios';
-import {AES} from 'crypto-js';
-
-
+import React from "react";
+import { Form, Input, Button, Checkbox, Radio, message } from "antd";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import axios from "axios";
+import { AES } from "crypto-js";
 
 export default function loginPage() {
+  const router = useRouter();
   const onFinish = (values) => {
-      axios
-      .post('https://cms.chtoma.com/api/login',{
-        ...values, 
-        password: AES.encrypt(values.password, 'cms').toString(),
-        // encrypt password;
-      }) 
-      .then((res) =>{
-        localStorage.setItem('cms', res.data.data);
+    axios
+      .post("https://cms.chtoma.com/api/login", {
+        ...values,
+        password: AES.encrypt(values.password, "cms").toString(),
+      })
+      .then((res) => {
+        localStorage.setItem("cms", JSON.stringify(res.data.data));
+        router.push("/dashboard");
       })
       .catch((error) => {
-        message.error('Please check your email or password');
-        // TODO: direct to dashboard 
-      })
-    }
+        message.error("Please check your email or password");
+      });
+  };
 
   return (
     <div
-      style={{ 
+      style={{
         display: "flex",
-        justifyContent: "center", 
-        alignItems: "center", 
+        justifyContent: "center",
+        alignItems: "center",
         flexDirection: "column",
         marginTop: 80,
         maxHeight: "100%",
       }}
-    >  
-
-      <h1 
-        style={{width: "35%", textAlign: "center", margin: "10px"}}>
+    >
+      <h1 style={{ width: "35%", textAlign: "center", margin: "10px" }}>
         Course Management Assistant
       </h1>
 
@@ -48,13 +45,10 @@ export default function loginPage() {
           role: "student",
           email: "",
           password: "",
-        }} 
-
+        }}
         onFinish={onFinish}
-
-        style = {{width: "35%"}}
+        style={{ width: "35%" }}
       >
-
         <Form.Item
           name="role"
           rules={[
@@ -75,17 +69,17 @@ export default function loginPage() {
           rules={[
             {
               required: true,
-              message: "email is required" ,
+              message: "email is required",
             },
             {
               message: "invalid email",
-            }
+            },
           ]}
         >
-          <Input 
-            prefix={<UserOutlined  />} 
+          <Input
+            prefix={<UserOutlined />}
             type="email"
-            placeholder="Please input email" 
+            placeholder="Please input email"
           />
         </Form.Item>
 
@@ -97,10 +91,10 @@ export default function loginPage() {
               message: "password is required",
             },
             {
-              max:16,
-              min:4,
+              max: 16,
+              min: 4,
               message: "password must be between 4 and 16 letters",
-            }
+            },
           ]}
         >
           <Input
@@ -110,34 +104,24 @@ export default function loginPage() {
           />
         </Form.Item>
 
-        <Form.Item 
-          name="remember" 
-          valuePropName="checked" 
-          noStyle>
+        <Form.Item name="remember" valuePropName="checked" noStyle>
           <Checkbox>Remember me</Checkbox>
         </Form.Item>
-          
 
         <Form.Item>
-          <Button 
-            type="primary" 
-            htmlType="submit" 
-            style={{width:"100%", margin:"25px auto"}}
+          <Button
+            type="primary"
+            htmlType="submit"
+            style={{ width: "100%", margin: "25px auto" }}
           >
-            <Link href='/dashboard'>Sign in</Link>
+            Sign in
           </Button>
           <div>
             <span>No account? </span>
           </div>
-          <Link href="">Sign up</Link>
+          {/* <Link href=''>Sign up</Link> */}
         </Form.Item>
-
       </Form>
     </div>
   );
-};
-
-
-
-
-
+}

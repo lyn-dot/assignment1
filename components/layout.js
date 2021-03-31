@@ -18,8 +18,7 @@ import axios from "axios";
 const { Header, Footer, Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
-export default function Page() {
-  console.log("rendered");
+export default function AppLayout(props) {
   const [collapsed, setCollapsed] = useState(false);
 
   const router = useRouter();
@@ -56,9 +55,6 @@ export default function Page() {
             <Menu.Item
               key="3"
               onClick={() => {
-                axios.get("https://cms.chtoma.com/api/students").then(() => {
-                  localStorage.getItem("cms", res.data.data);
-                });
                 router.push("/students");
               }}
             >
@@ -133,17 +129,22 @@ export default function Page() {
               icon={
                 <Popover
                   content={
-                    <LogoutOutlined
-                      onClick={() => {
-                        axios
-                          .post("https://cms.chtoma.com/api/logout")
-                          .then(() => {
-                            localStorage.removeItem("cms", res.data.data);
-                          });
-                        router.push("/login");
-                      }}
-                      size="small"
-                    />
+                    <div>
+                      <LogoutOutlined
+                        onClick={() => {
+                          axios
+                            .post("https://cms.chtoma.com/api/logout")
+                            .then(() => {
+                              localStorage.removeItem("cms", res.data.data);
+                            });
+                          router.push("/login");
+                        }}
+                        size="small"
+                      />
+                      <Link href="/login">
+                        <span onclick={onClick}>Logout</span>
+                      </Link>
+                    </div>
                   }
                   trigger="hover"
                 >
@@ -157,9 +158,9 @@ export default function Page() {
         <Content style={{ margin: "0 16px" }}>
           <Breadcrumb style={{ margin: "16px 0" }}>
             <Breadcrumb.Item>CMS MANAGER SYSTEM</Breadcrumb.Item>
-            <Breadcrumb.Item></Breadcrumb.Item>
+            <Breadcrumb.Item>Overview</Breadcrumb.Item>
           </Breadcrumb>
-          <div> TODO</div>
+          {props.children}
         </Content>
 
         <Footer style={{ textAlign: "center" }}>Copyright ©2018 CMS</Footer>

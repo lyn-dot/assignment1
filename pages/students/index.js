@@ -6,7 +6,6 @@ import axios from "axios";
 import AppLayout from "../../components/layout";
 
 // dashboard/index.js 里的flex布局； 及 上面三个图标分别放入两个容器；
-// 'Add' button, alert form;
 // search bar;
 
 export default function studentList() {
@@ -17,6 +16,7 @@ export default function studentList() {
   });
 
   // headers (network->request headers服务器跟客户端沟通时发出的公共信息，会被编码)-> 看课件回放edward那一段；
+
   //render?
 
   useEffect(() => {
@@ -41,10 +41,12 @@ export default function studentList() {
 
   const numData = [];
 
+  // 仍然无法显示学生数据；
   const columns = [
     {
       title: "No.",
       dataIndex: "number",
+      // 显示数据列号
     },
     {
       title: "Name",
@@ -114,15 +116,37 @@ export default function studentList() {
     {
       title: "Action",
       dataIndex: "updatedAt",
+      // render + 编辑和删除功能；
     },
   ];
 
   return (
-    (<Button>Add</Button>),
     (
-      // 添加pagination;
+      <Button
+        type="primary"
+        // on click 'Add' button, alert form-增加、编辑学生功能;
+        //onClick = {() => {}}
+      >
+        Add
+      </Button>
+    ),
+    (
       <AppLayout>
-        <Table columns={columns} dataSource={data} />
+        <Table
+          columns={columns}
+          dataSource={data}
+          pagination={{
+            ...pagination,
+            total,
+          }}
+          // 点击不同页面，跳转页面；
+          //onChange = {(pagination) => {
+          // setPagination((prevState) => {
+          //   ...prevState,
+          //   page: pagination.current,
+          //   limit: pagination.pageSize,
+          // });}}
+        />
       </AppLayout>
     )
   );

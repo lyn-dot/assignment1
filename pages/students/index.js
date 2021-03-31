@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Table, Space, Input } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import { formatDistanceToNow } from "date-fns";
 import { debounce } from "lodash";
 import axios from "axios";
@@ -128,6 +129,7 @@ export default function studentList() {
       <Space direction="vertical">
         <Button
           type="primary"
+          prefix={<PlusOutlined />}
           // on click 'Add' button, alert form-增加、编辑学生功能;
           onClick={() => {
             <Form>

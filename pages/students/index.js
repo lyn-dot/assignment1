@@ -42,7 +42,6 @@ export default function studentList() {
 
   const numData = [];
 
-  const onSearch = (value) => console.log(value);
   const Search = Input;
 
   // 仍然无法显示学生数据；
@@ -125,41 +124,35 @@ export default function studentList() {
   ];
 
   return (
-    (
-      <Button
-        type="primary"
-        // on click 'Add' button, alert form-增加、编辑学生功能;
-        //onClick = {() => {}}
-      >
-        Add
-      </Button>
-    ),
-    (
+    <AppLayout>
       <Space direction="vertical">
+        <Button
+          type="primary"
+          // on click 'Add' button, alert form-增加、编辑学生功能;
+          //onClick = {() => {}
+        >
+          Add
+        </Button>
         <Search
           placeholder="search by name"
-          onSearch={onSearch}
+          onSearch={(value) => setQuery(value)}
           onChange={(event) => updateQuery(event.target.value)}
         />
       </Space>
-    ),
-    (
-      <AppLayout>
-        <Table
-          columns={columns}
-          dataSource={data}
-          pagination={{
-            ...pagination,
-          }}
-          // 点击不同页面，跳转页面；
-          //onChange = {(pagination) => {
-          // setPagination((prevState) => {
-          //   ...prevState,
-          //   page: pagination.current,
-          //   limit: pagination.pageSize,
-          // });}}
-        />
-      </AppLayout>
-    )
+      <Table
+        columns={columns}
+        dataSource={data}
+        pagination={{
+          ...pagination,
+        }}
+        // 点击不同页面，跳转页面；
+        //onChange = {(pagination) => {
+        // setPagination((prevState) => {
+        //   ...prevState,
+        //   page: pagination.current,
+        //   limit: pagination.pageSize,
+        // });}}
+      />
+    </AppLayout>
   );
 }

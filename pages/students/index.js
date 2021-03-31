@@ -6,7 +6,6 @@ import axios from "axios";
 import AppLayout from "../../components/layout";
 
 // dashboard/index.js 里的flex布局； 及 上面三个图标分别放入两个容器；
-// search bar;
 
 export default function studentList() {
   const [data, setData] = useState([]);
@@ -14,6 +13,8 @@ export default function studentList() {
     page: 1,
     limit: 20,
   });
+  const [query, setQuery] = useState();
+  const updateQuery = debounce(setQuery, 1000);
 
   // headers (network->request headers服务器跟客户端沟通时发出的公共信息，会被编码)-> 看课件回放edward那一段；
 
@@ -40,6 +41,9 @@ export default function studentList() {
   }, []);
 
   const numData = [];
+
+  const onSearch = (value) => console.log(value);
+  const Search = Input;
 
   // 仍然无法显示学生数据；
   const columns = [
@@ -131,13 +135,21 @@ export default function studentList() {
       </Button>
     ),
     (
+      <Space direction="vertical">
+        <Search
+          placeholder="search by name"
+          onSearch={onSearch}
+          onChange={(event) => updateQuery(event.target.value)}
+        />
+      </Space>
+    ),
+    (
       <AppLayout>
         <Table
           columns={columns}
           dataSource={data}
           pagination={{
             ...pagination,
-            total,
           }}
           // 点击不同页面，跳转页面；
           //onChange = {(pagination) => {

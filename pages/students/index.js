@@ -31,9 +31,9 @@ export default function studentList() {
         params: pagination,
       })
       .then((res) => {
-        const data = ("cms", JSON.stringify(res.data.data));
+        const data = JSON.parse(JSON.stringify(res.data.data));
 
-        setData(data.data.students);
+        setData(data.students);
         console.log(data);
       })
       .catch((err) => {
@@ -89,9 +89,7 @@ export default function studentList() {
     {
       title: "Selected Curriculum",
       dataIndex: "courses",
-      render: (courses) => {
-        courses?.map(course.name).join(",");
-      },
+      render: (courses) => courses?.map((course) => course.name).join(","),
     },
     {
       title: "Student Type",
@@ -108,7 +106,7 @@ export default function studentList() {
       ],
       filterMultiple: false,
       onFilter: (value, record) => record.studentType.indexOf(value) === 0,
-      render: (type, record, index) => <div>{type}</div>,
+      render: (t) => t?.name,
     },
     {
       title: "Join Time",

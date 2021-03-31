@@ -131,26 +131,20 @@ export default function studentList() {
           // on click 'Add' button, alert form-增加、编辑学生功能;
           onClick={() => {
             <Form>
-              <Form.Item name="name">
+              <fieldset>
                 <Input
-                  prefix={"Name"}
+                  title="Name"
                   type="text"
                   placeholder="Please input name"
                 />
-              </Form.Item>
-              <Form.Item name="email">
                 <Input
-                  prefix={"Email"}
+                  title="Email"
                   type="email"
                   placeholder="Please input email"
                 />
-              </Form.Item>
-              <Form.Item name="area">
-                <Input prefix={"Area"} type="text" placeholder="" />
-              </Form.Item>
-              <Form.Item name="studentType">
-                <Input prefix={"Student Type"} type="text" placeholder="" />
-              </Form.Item>
+                <Input title="Area" type="text" placeholder="" />
+                <Input title="Student Type" type="text" placeholder="" />
+              </fieldset>
             </Form>;
           }}
         >

@@ -59,7 +59,7 @@ export default function Page() {
                 axios.get("https://cms.chtoma.com/api/students").then(() => {
                   localStorage.getItem("cms", res.data.data);
                 });
-                router.push("/students");
+                router.push("dashboard/manager/students");
               }}
             >
               Student List
@@ -70,7 +70,7 @@ export default function Page() {
             <Menu.Item
               key="4"
               onClick={() => {
-                router.push("/teachers");
+                router.push("dashboard/manager/teachers");
               }}
             >
               Teacher List

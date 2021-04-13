@@ -4,7 +4,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { formatDistanceToNow } from "date-fns";
 import { debounce } from "lodash";
 import axios from "axios";
-import AppLayout from "../../components/layout";
+import AppLayout from "../../../../components/layout";
 
 // dashboard/index.js 里的flex布局； 及 上面三个图标分别放入两个容器；
 
@@ -17,9 +17,7 @@ export default function studentList() {
   const [query, setQuery] = useState();
   const updateQuery = debounce(setQuery, 1000);
 
-  // headers (network->request headers服务器跟客户端沟通时发出的公共信息，会被编码)-> 看课件回放edward那一段；
-
-  //render?
+  // headers (network->request headers服务器跟客户端沟通时发出的公共信息，会被编码)-> 看课件0330回放edward那一段；
 
   useEffect(() => {
     axios
@@ -31,29 +29,43 @@ export default function studentList() {
         params: pagination,
       })
       .then((res) => {
+        //  下面这行老师没明白？没问题啊
+        console.log(res.data.data);
         const data = JSON.parse(JSON.stringify(res.data.data));
-
         setData(data.students);
         console.log(data);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [pagination, query]);
 
   const numData = [];
 
   const Search = Input;
 
+  // 显示序列号用这个方法没成功：
+  //const p = [];
+  // for (let i = 0; i < 20; i++) {
+  //   data.push({
+  //     key: i,
+  //     number: "${i}",
+  //   });
+  // }
   const columns = [
     {
-      // 显示数据列号
       title: "No.",
       dataIndex: "number",
+      key: "number",
+      render: (number, index) => {
+        console.log(index);
+        // (page - 1) * 10 + number;
+      },
     },
     {
       title: "Name",
       dataIndex: "name",
+      key: "name",
       sorter: (a, b) => a.name.length - b.name.length,
       sortDirections: ["descend", "ascend"],
       render: (text) => <a>{text}</a>,
@@ -61,6 +73,7 @@ export default function studentList() {
     {
       title: "Area",
       dataIndex: "country",
+      key: "country",
       filters: [
         {
           text: "China",
@@ -79,7 +92,7 @@ export default function studentList() {
           value: "Australia",
         },
       ],
-      onFilter: (value, record) => record.area.indexOf(value) === 0,
+      onFilter: (value, record) => record?.country.indexOf(value) === 0,
     },
     {
       title: "Email",
@@ -88,11 +101,13 @@ export default function studentList() {
     {
       title: "Selected Curriculum",
       dataIndex: "courses",
+      key: "courses",
       render: (courses) => courses?.map((course) => course.name).join(","),
     },
     {
       title: "Student Type",
       dataIndex: "type",
+      key: "type",
       filters: [
         {
           text: "Developer",
@@ -117,7 +132,7 @@ export default function studentList() {
     {
       title: "Action",
       dataIndex: "updatedAt",
-      // render + 编辑和删除功能；
+      // 编辑和删除功能；
     },
   ];
 
@@ -160,16 +175,27 @@ export default function studentList() {
         columns={columns}
         dataSource={data}
         pagination={{
-          ...pagination,
+          showSizeChanger: true,
+          pageSize: pagination.limit,
+          current: pagination.page,
+          // total,
         }}
-        // 点击不同页面，跳转页面；
-        //onChange = {(pagination) => {
-        // setPagination((prevState) => {
-        //   ...prevState,
-        //   page: pagination.current,
-        //   limit: pagination.pageSize,
-        // });}}
+        // onChange = {(pagination) => {
+        //   setPagination(() => {
+        //     page: pagination.current,
+        //     limit: pagination.pageSize,
+        //   });
+        // }}
       />
+      {/* <Pagination
+        onChange={
+          (onChange = {
+            page: pagination.current,
+            limit: pagination.pageSize,
+          })
+        }
+        total={20} */}
+      {/* /> */}
     </AppLayout>
   );
 }

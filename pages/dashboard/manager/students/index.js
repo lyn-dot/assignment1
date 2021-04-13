@@ -14,7 +14,8 @@ export default function studentList() {
     page: 1,
     limit: 20,
   });
-  const [query, setQuery] = useState();
+  const [total, setTotal] = useState();
+  const [query, setQuery] = useState("");
   const updateQuery = debounce(setQuery, 1000);
 
   // headers (network->request headers服务器跟客户端沟通时发出的公共信息，会被编码)-> 看课件0330回放edward那一段；
@@ -59,7 +60,7 @@ export default function studentList() {
       key: "number",
       render: (number, index) => {
         console.log(index);
-        // (page - 1) * 10 + number;
+        // (page - 1) * 10 + number;  ？报错，page为什么没define?
       },
     },
     {
@@ -133,6 +134,11 @@ export default function studentList() {
       title: "Action",
       dataIndex: "updatedAt",
       // 编辑和删除功能；
+      render: (text, record) => {
+        return (
+          <button onClick={() => this.handleDelete(record.id)}>delete</button>
+        );
+      },
     },
   ];
 
@@ -175,27 +181,19 @@ export default function studentList() {
         columns={columns}
         dataSource={data}
         pagination={{
-          showSizeChanger: true,
-          pageSize: pagination.limit,
-          current: pagination.page,
-          // total,
+          ...pagination,
+          total,
         }}
-        // onChange = {(pagination) => {
-        //   setPagination(() => {
+        //这里还是没理解!-.-!
+        // onChange = {pagination => {
+        //   setPaginator((prevState) => {
+        //     ...prevState,
         //     page: pagination.current,
         //     limit: pagination.pageSize,
-        //   });
+        //     setQuery('page=${paginator.page}&limit=${paginator.limit}'),
+        //   {"}"})
         // }}
       />
-      {/* <Pagination
-        onChange={
-          (onChange = {
-            page: pagination.current,
-            limit: pagination.pageSize,
-          })
-        }
-        total={20} */}
-      {/* /> */}
     </AppLayout>
   );
 }

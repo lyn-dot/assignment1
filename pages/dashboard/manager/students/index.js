@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Form, Button, Table, Space, Input } from "antd";
+import React, { useState, useEffect, dispatch } from "react";
+import { Form, Button, Table, Space, Input, Pagination } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { formatDistanceToNow } from "date-fns";
 import { debounce } from "lodash";
@@ -41,28 +41,27 @@ export default function studentList() {
       });
   }, [pagination, query]);
 
-  const numData = [];
+  // console.log(handleDelete);
+  // const handleDelete = studentId => {
+  //   const studentId =
+  // };
+  // dispatch({
+  //   type: "cards /deleteOne",
+  //   // payload: id,
+  // });
+  // this.props.dispatch({
+  //   type: "cards/queryList",
+  // });
 
-  const Search = Input;
-
-  // 显示序列号用这个方法没成功：
-  //const p = [];
-  // for (let i = 0; i < 20; i++) {
-  //   data.push({
-  //     key: i,
-  //     number: "${i}",
-  //   });
-  // }
   const columns = [
     {
       title: "No.",
       dataIndex: "number",
-      key: "number",
-      render: (number, index) => {
-        console.log(index);
-        // (page - 1) * 10 + number;  ？报错，page为什么没define?
+      render: (text, record, index) => {
+        return index + 1;
       },
     },
+
     {
       title: "Name",
       dataIndex: "name",
@@ -93,6 +92,7 @@ export default function studentList() {
           value: "Australia",
         },
       ],
+      //test country filter?
       onFilter: (value, record) => record?.country.indexOf(value) === 0,
     },
     {
@@ -112,15 +112,17 @@ export default function studentList() {
       filters: [
         {
           text: "Developer",
-          value: "Developer",
+          value: "developer",
         },
         {
           text: "Tester",
-          value: "Tester",
+          value: "tester",
         },
       ],
       filterMultiple: false,
-      onFilter: (value, record) => record.studentType.indexOf(value) === 0,
+      onFilter: (value, record) => {
+        return record.type.name === value;
+      },
       render: (t) => t?.name,
     },
     {
@@ -171,28 +173,23 @@ export default function studentList() {
         >
           Add
         </Button>
-        <Search
+        <Input
           placeholder="search by name"
           onSearch={(value) => setQuery(value)}
           onChange={(event) => updateQuery(event.target.value)}
         />
       </Space>
       <Table
+        rowKey="id"
         columns={columns}
         dataSource={data}
         pagination={{
-          ...pagination,
-          total,
+          defaultCurrent: "1",
+          total: "290",
         }}
-        //这里还是没理解!-.-!
-        // onChange = {pagination => {
-        //   setPaginator((prevState) => {
-        //     ...prevState,
-        //     page: pagination.current,
-        //     limit: pagination.pageSize,
-        //     setQuery('page=${paginator.page}&limit=${paginator.limit}'),
-        //   {"}"})
-        // }}
+        onChange={(pagination) => {
+          setPagination({ page: 1, limit: 20 });
+        }}
       />
     </AppLayout>
   );

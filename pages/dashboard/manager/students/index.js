@@ -322,33 +322,8 @@ export default function studentList() {
           });
         }}
       />
-      <Modal
-        title={editStudent ? 'Edit Student' : 'Add Student'}
-        destroyOnClose={true}
-        maskClosable={false}
-        centered
-        visible={visible}
-        onCancel={handleCancel}
-        footer={[
-          <Button type="link" key="cancel" onClick={handleCancel}>
-            Cancel
-          </Button>,
-        ]}
-      ></Modal>
-      <Form
-        student={editStudent}
-        onFinish={(student) => {
-          if (editStudent) {
-            const index = data.findIndex((item) => item.id === student.id);
-
-            data[index] = student;
-            setData([...data]);
-          }
-          setVisible(false);
-        }}
-        // countries={countries}
-        // student_types={student_types}
-      ></Form>
+      
+     
     </AppLayout>
   );
 }

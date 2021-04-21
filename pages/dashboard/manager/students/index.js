@@ -1,9 +1,10 @@
 import React, { useState, useEffect, dispatch } from "react";
-import { Form, Button, Table, Space, Input, InputNumber, Popconfirm, Pagination, Typography } from "antd";
+import { Form, Button, Table, Space, Input, Modal, Dropdown, InputNumber, Popconfirm, Pagination, Typography } from "antd";
 import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
 import { formatDistanceToNow } from "date-fns";
 import { debounce } from "lodash";
 import axios from "axios";
+import TextLink from 'antd/lib/typography/Link';
 import AppLayout from "../../../../components/layout";
 
 // dashboard/index.js 里的flex布局； 及 上面三个图标分别放入两个容器；
@@ -18,84 +19,58 @@ export default function studentList() {
   const [query, setQuery] = useState("");
   const updateQuery = debounce(setQuery, 1000);
 
-  // ’edit‘ function under 'Action': 
-  const EditableCell = ({
-    editing,
-    dataIndex,
-    title,
-    inputType,
-    record,
-    index,
-    children,
-    ...restProps
-  }) => {
-    const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
-    return (
-      <td {...restProps}>
-        {editing ? (
-          <Form.Item
-            name={dataIndex}
-            style={{
-              margin: 0,
-            }}
-            rules={[
-              {
-                required: true,
-                message: `Please Input ${title}!`,
-              },
-            ]}
-          >
-            {inputNode}
-          </Form.Item>
-        ) : (
-          children
-        )}
-      </td>
-    );
-  };
 
-  const EditableTable = () => {
-    const [form] = Form.useForm();
-    const [data, setData] = useState(originData);
-    const [editingKey, setEditingKey] = useState('');
 
-    const isEditing = (record) => record.key === editingKey;
-
-    const edit = (record) => {
-      form.setFieldsValue({
-        name: '',
-        age: '',
-        address: '',
-        ...record,
+  // 5. response success ---->  添加成功的信息
+  //           fail -------->  提示用户失败
+  const [visible, setVisible] = useState(false);
+  const [editStudent, setEditStudent] = useState(null);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const handleOk = (values) => {
+    setConfirmLoading(true);
+    setTimeout(() => {
+      setVisible(false);
+      setConfirmLoading(false);
+    }, 2000);
+    axios
+      .post("https://cms.chtoma.com/api/students", {
+        ...values,
+        // password: AES.encrypt(values.password, "cms").toString(),
+      })
+      .then((res) => {
+        localStorage.setItem("cms", JSON.stringify(res.data.data))
+        window.alert('success')
+      })
+      .catch((e) => {
       });
-      setEditingKey(record.key);
-    };
   };
 
-  const cancel = () => {
-    setEditingKey('');
+  const handleCancel = () => {
+    setVisible(false);
   };
 
-  const save = async (key) => {
-    try {
-      const row = await form.validateFields();
-      const newData = [...data];
-      const index = newData.findIndex((item) => key === item.key);
 
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, { ...item, ...row });
-        setData(newData);
-        setEditingKey('');
-      } else {
-        newData.push(row);
-        setData(newData);
-        setEditingKey('');
-      }
-    } catch (errInfo) {
-      console.log('Validate Failed:', errInfo);
-    }
-  };
+
+  // EDIT
+  // 1.   button link --->  add
+  // 2.  click --> modal 弹出来
+  // 3.  form , 把 form item全设置好 （校验规则）；设置表单初始值
+  // 4. 确认之后，发送请求， PUT 方法，接口见文档
+  //      取消 ，关闭modal
+  // 5. response success ---->  添加成功的信息，修改对应的数据
+  //           fail -------->  提示用户失败
+
+  // DELETE
+  // 1.  button link -----> delete
+  // 2.  删除之前 popup提示用户
+  // 3.  确定删除----> send request  Cancel -----> close
+  // 4. response success ---> 删除对应的数据
+  // fail ------> 提示用户失败
+
+
+
+
+
 
   // headers (network->request headers服务器跟客户端沟通时发出的公共信息，会被编码)-> 看课件0330回放edward那一段；
 
@@ -159,7 +134,7 @@ export default function studentList() {
           value: "Australia",
         },
       ],
-      //test country filter?
+      // area filter 
       onFilter: (value, record) => record?.country.indexOf(value) === 0,
     },
     {
@@ -203,109 +178,177 @@ export default function studentList() {
       title: "Action",
       dataIndex: "updatedAt",
       render: (_, record) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <span>
-            <a
-              href="javascript:;"
-              onClick={() => save(record.key)}
-              style={{
-                marginRight: 8,
-              }}
-            >
-              Save
-            </a>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a>Cancel</a>
-            </Popconfirm>
-          </span>
-        ) : (
-          <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-            Edit
-          </Typography.Link>
-        );
-      },
-    },
-  ];
-  const mergedColumns = columns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-
-    return {
-      ...col,
-      onCell: (record) => ({
-        record,
-        inputType: col.dataIndex === 'age' ? 'number' : 'text',
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-      }),
-    };
-  }); 
-
-    return (
-      <AppLayout>
-        <Space direction="vertical">
-          <Button
-            type="primary"
-            prefix={<PlusOutlined />}
-            // on click 'Add' button, alert form-增加、编辑学生功能;
-
+        <Space size="middle">
+          <TextLink
             onClick={() => {
-              <Form>
-                <fieldset>
-                  <Input
-                    title="Name"
-                    type="text"
-                    placeholder="Please input name"
-                  />
-                  <Input
-                    title="Email"
-                    type="email"
-                    placeholder="Please input email"
-                  />
-                  <Input title="Area" type="text" placeholder="" />
-                  <Input title="Student Type" type="text" placeholder="" />
-                </fieldset>
-              </Form>;
+              setEditStudent(record);
+              setVisible(true);
             }}
           >
-            Add
-        </Button>
-          <Input
-            placeholder="search by name"
-            onSearch={(value) => {
-              setQuery(value);
+            Edit
+          </TextLink>
+
+          <Popconfirm
+            title="Are you sure to delete?"
+            onConfirm={() => {
+              apiServices.deleteStudents(record.id).then((res) => {
+                if (res.data) {
+                  const index = data.findIndex((item) => item.id === record.id);
+                  const updatedData = [...data];
+                  updatedData.splice(index, 1);
+                  setData(updatedData);
+                  setTotal(total - 1);
+                }
+              });
             }}
-            onChange={(event) => updateQuery(event.target.value)}
-            suffix={
-              <SearchOutlined
-                style={{
-                  fontSize: 16,
-                  color: "#1890ff",
-                }}
-              />
-            }
-          />
+            okText="Yes"
+            cancelText="No"
+          >
+            <a>Delete</a>
+          </Popconfirm>
         </Space>
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={data}
-          pagination={{
-            pageSize: Pagination.limit,
-            current: Pagination.page,
-            total,
+      },
+    }
+    ];
+
+
+  return (
+    <AppLayout>
+      <Space
+        direction="horizontal"
+        style={{
+          marginBottom: '20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Button
+          type="primary"
+          prefix={<PlusOutlined />}
+          onClick={() => {
+            setVisible(true);
           }}
-          onChange={(paginator, filters, sorter) => {
-            console.log(paginator);
-            return setPagination({
-              page: paginator.current,
-              limit: paginator.pageSize,
-            });
+        >
+          Add
+        </Button>
+        <Modal
+          title="Add Student"
+          visible={visible}
+          onOk={handleOk}
+          confirmLoading={confirmLoading}
+          onCancel={handleCancel}>
+          <Form>
+            <Form.Item
+              label="Name"
+              type="text"
+              placeholder="student name"
+              rules={[
+                {
+                  required: true,
+                  message: 'name is required',
+                },
+              ]}
+            > <Input type="textarea" /></Form.Item>
+            <Form.Item
+              label="Email"
+              placeholder="Please input email"
+              rules={[
+                {
+                  required: true,
+                  message: 'email is required',
+                },
+              ]}
+            > <Input type="textarea" /></Form.Item>
+            <Form.Item
+              title='Area'
+              lable="Area"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Input type='text' />
+              <span class="dropdown">
+                <ul class="dropdown-menu" >
+                  <li>China</li>
+                  <li>New Zealand</li>
+                  <li>Canada</li>
+                  <li>Australia</li>
+                </ul>
+              </span>
+            </Form.Item>
+            <Form.Item
+              lable="Student Type"
+              rules={[
+                {
+                  required: true,
+                },
+              ]} >
+              <Input type='text' />
+            </Form.Item>
+          </Form>
+        </Modal>
+        <Input
+          placeholder="search by name"
+          onSearch={(value) => {
+            setQuery(value);
           }}
+          onChange={(event) => updateQuery(event.target.value)}
+          style={{ display: 'flex' }}
+          suffix={
+            <SearchOutlined
+              style={{
+                fontSize: 16,
+                color: "#1890ff",
+              }}
+            />
+          }
         />
-      </AppLayout>
-    );
-  }
+      </Space>
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={data}
+        pagination={{
+          pageSize: Pagination.limit,
+          current: Pagination.page,
+          total,
+        }}
+        onChange={(paginator) => {
+          setPagination({
+            page: paginator.current,
+            limit: paginator.pageSize,
+          });
+        }}
+      />
+      <Modal
+        title={editStudent ? 'Edit Student' : 'Add Student'}
+        destroyOnClose={true}
+        maskClosable={false}
+        centered
+        visible={visible}
+        onCancel={handleCancel}
+        footer={[
+          <Button type="link" key="cancel" onClick={handleCancel}>
+            Cancel
+          </Button>,
+        ]}
+      ></Modal>
+      <Form
+        student={editStudent}
+        onFinish={(student) => {
+          if (editStudent) {
+            const index = data.findIndex((item) => item.id === student.id);
+
+            data[index] = student;
+            setData([...data]);
+          }
+          setVisible(false);
+        }}
+        // countries={countries}
+        // student_types={student_types}
+      ></Form>
+    </AppLayout>
+  );
+}

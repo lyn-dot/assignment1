@@ -1,13 +1,27 @@
 import React, { useState, useEffect, dispatch } from "react";
-import { Form, Button, Table, Space, Input, Modal, Dropdown, InputNumber, Popconfirm, Pagination, Typography } from "antd";
+import {
+  Select,
+  Form,
+  Button,
+  Table,
+  Space,
+  Input,
+  Modal,
+  Popconfirm,
+  Pagination,
+  Typography,
+} from "antd";
 import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
 import { formatDistanceToNow } from "date-fns";
 import { debounce } from "lodash";
 import axios from "axios";
-import TextLink from 'antd/lib/typography/Link';
+import TextLink from "antd/lib/typography/Link";
 import AppLayout from "../../../../components/layout";
+import ModalForm from "../../../../components/modalform";
 
 // dashboard/index.js 里的flex布局； 及 上面三个图标分别放入两个容器；
+
+const { Option } = Select;
 
 export default function studentList() {
   const [data, setData] = useState([]);
@@ -18,38 +32,32 @@ export default function studentList() {
   const [total, setTotal] = useState(0);
   const [query, setQuery] = useState("");
   const updateQuery = debounce(setQuery, 1000);
-
-
-
-  // 5. response success ---->  添加成功的信息
-  //           fail -------->  提示用户失败
   const [visible, setVisible] = useState(false);
   const [editStudent, setEditStudent] = useState(null);
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const handleOk = (values) => {
-    setConfirmLoading(true);
-    setTimeout(() => {
-      setVisible(false);
-      setConfirmLoading(false);
-    }, 2000);
-    axios
-      .post("https://cms.chtoma.com/api/students", {
-        ...values,
-        // password: AES.encrypt(values.password, "cms").toString(),
-      })
-      .then((res) => {
-        localStorage.setItem("cms", JSON.stringify(res.data.data))
-        window.alert('success')
-      })
-      .catch((e) => {
-      });
-  };
-
   const handleCancel = () => {
+    form.resetFields();
     setVisible(false);
   };
-
-
+  const [form] = Form.useForm();
+  const onCreate = (values) => {
+    console.log("Received values of form: ", values);
+    setVisible(false);
+    axios
+      .post("https://cms.chtoma.com/api/students", values, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization:
+            "Bearer " + JSON.parse(localStorage.getItem("cms")).token,
+        },
+      })
+      .then((res) => {
+        localStorage.setItem("cms", JSON.stringify(res.data.data));
+        alert("success");
+      })
+      .catch((e) => {
+        alert("failed");
+      });
+  };
 
   // EDIT
   // 1.   button link --->  add
@@ -66,11 +74,6 @@ export default function studentList() {
   // 3.  确定删除----> send request  Cancel -----> close
   // 4. response success ---> 删除对应的数据
   // fail ------> 提示用户失败
-
-
-
-
-
 
   // headers (network->request headers服务器跟客户端沟通时发出的公共信息，会被编码)-> 看课件0330回放edward那一段；
 
@@ -92,8 +95,6 @@ export default function studentList() {
         console.log(err);
       });
   }, [Pagination, query]);
-
-
 
   const columns = [
     {
@@ -134,7 +135,7 @@ export default function studentList() {
           value: "Australia",
         },
       ],
-      // area filter 
+      // area filter
       onFilter: (value, record) => record?.country.indexOf(value) === 0,
     },
     {
@@ -178,48 +179,52 @@ export default function studentList() {
       title: "Action",
       dataIndex: "updatedAt",
       render: (_, record) => {
-        <Space size="middle">
-          <TextLink
-            onClick={() => {
-              setEditStudent(record);
-              setVisible(true);
-            }}
-          >
-            Edit
-          </TextLink>
+        return (
+          <Space size="middle">
+            <TextLink
+              title="Edit Student"
+              onClick={() => {
+                setEditStudent(record);
+                setVisible(true);
+              }}
+            >
+              Edit
+            </TextLink>
 
-          <Popconfirm
-            title="Are you sure to delete?"
-            onConfirm={() => {
-              apiServices.deleteStudents(record.id).then((res) => {
-                if (res.data) {
-                  const index = data.findIndex((item) => item.id === record.id);
-                  const updatedData = [...data];
-                  updatedData.splice(index, 1);
-                  setData(updatedData);
-                  setTotal(total - 1);
-                }
-              });
-            }}
-            okText="Yes"
-            cancelText="No"
-          >
-            <a>Delete</a>
-          </Popconfirm>
-        </Space>
+            <Popconfirm
+              title="Are you sure to delete?"
+              onConfirm={() => {
+                apiServices.deleteStudents(record.id).then((res) => {
+                  if (res.data) {
+                    const index = data.findIndex(
+                      (item) => item.id === record.id
+                    );
+                    const updatedData = [...data];
+                    updatedData.splice(index, 1);
+                    setData(updatedData);
+                    setTotal(total - 1);
+                  }
+                });
+              }}
+              okText="Confirm"
+              cancelText="Cancel"
+            >
+              <a>Delete</a>
+            </Popconfirm>
+          </Space>
+        );
       },
-    }
-    ];
-
+    },
+  ];
 
   return (
     <AppLayout>
       <Space
         direction="horizontal"
         style={{
-          marginBottom: '20px',
-          display: 'flex',
-          justifyContent: 'space-between',
+          marginBottom: "20px",
+          display: "flex",
+          justifyContent: "space-between",
         }}
       >
         <Button
@@ -234,58 +239,95 @@ export default function studentList() {
         <Modal
           title="Add Student"
           visible={visible}
-          onOk={handleOk}
-          confirmLoading={confirmLoading}
-          onCancel={handleCancel}>
-          <Form>
+          onOk={() => {
+            form
+              .validateFields()
+              .then((values) => {
+                form.resetFields();
+                onCreate(values);
+              })
+              .catch((info) => {
+                console.log("Validate Failed:", info);
+              });
+          }}
+          onCancel={handleCancel}
+        >
+          <Form
+            form={form}
+            name="student_form"
+            initialValues={{
+              name: "name",
+              country: "area",
+              email: "email",
+            }}
+          >
             <Form.Item
               label="Name"
-              type="text"
+              name="name"
               placeholder="student name"
               rules={[
                 {
                   required: true,
-                  message: 'name is required',
+                  message: "name is required",
                 },
               ]}
-            > <Input type="textarea" /></Form.Item>
+            >
+              <Input />
+            </Form.Item>
             <Form.Item
+              name="email"
               label="Email"
               placeholder="Please input email"
               rules={[
                 {
                   required: true,
-                  message: 'email is required',
+                  type:"email", 
+                  message: "email is required",
+                },
+                {
+                  message: "invalid email",
                 },
               ]}
-            > <Input type="textarea" /></Form.Item>
+            >
+              <Input />
+            </Form.Item>
             <Form.Item
-              title='Area'
-              lable="Area"
+              name="country"
+              label="Area"
               rules={[
                 {
                   required: true,
                 },
               ]}
             >
-              <Input type='text' />
-              <span class="dropdown">
-                <ul class="dropdown-menu" >
-                  <li>China</li>
-                  <li>New Zealand</li>
-                  <li>Canada</li>
-                  <li>Australia</li>
-                </ul>
-              </span>
+              <Select
+                placeholder="Select an area"
+                onChange={(area) => {}}
+                allowClear
+              >
+                <Option value="China">China</Option>
+                <Option value="NZ">New Zealand</Option>
+                <Option value="Canada">Canada</Option>
+                <Option value="oz">Australia</Option>
+              </Select>
             </Form.Item>
             <Form.Item
-              lable="Student Type"
+              name="type"
+              label="Student Type"
               rules={[
                 {
                   required: true,
                 },
-              ]} >
-              <Input type='text' />
+              ]}
+            >
+              <Select
+                placeholder="Select a type"
+                onChange={(student) => {}}
+                allowClear
+              >
+                <Option value="ts">Tester</Option>
+                <Option value="dv">Developer</Option>
+              </Select>
             </Form.Item>
           </Form>
         </Modal>
@@ -295,7 +337,7 @@ export default function studentList() {
             setQuery(value);
           }}
           onChange={(event) => updateQuery(event.target.value)}
-          style={{ display: 'flex' }}
+          style={{ display: "flex" }}
           suffix={
             <SearchOutlined
               style={{
@@ -322,8 +364,6 @@ export default function studentList() {
           });
         }}
       />
-      
-     
     </AppLayout>
   );
 }

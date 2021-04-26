@@ -22,7 +22,10 @@ const { SubMenu } = Menu;
 export default function Page() {
   console.log("rendered");
   const [collapsed, setCollapsed] = useState(false);
-
+  const [Pagination, setPagination] = useState({
+    page: 1,
+    limit: 20,
+  });
   const router = useRouter();
 
   const onClick = () => {};
@@ -57,7 +60,13 @@ export default function Page() {
             <Menu.Item
               key="3"
               onClick={() => {
-                axios.get("https://cms.chtoma.com/api/students").then(() => {
+                axios.get("https://cms.chtoma.com/api/students", {
+                  headers: {
+                    Authorization:
+                      "Bearer " + JSON.parse(localStorage.getItem("cms")).token,
+                  },
+                  params: Pagination,
+                }).then((res) => {
                   localStorage.getItem("cms", res.data.data);
                 });
                 router.push("dashboard/manager/students");

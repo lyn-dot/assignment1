@@ -6,7 +6,6 @@ import {
   Table,
   Space,
   Input,
-  Modal,
   Popconfirm,
   Pagination,
   Typography,
@@ -25,7 +24,7 @@ const { Option } = Select;
 
 export default function studentList() {
   const [data, setData] = useState([]);
-  const [Pagination, setPagination] = useState({
+  const [pagination, setPagination] = useState({
     page: 1,
     limit: 20,
   });
@@ -40,7 +39,7 @@ export default function studentList() {
   };
   const [form] = Form.useForm();
   const onCreate = (values) => {
-    console.log("Received values of form: ", values);
+    // console.log("Received values of form: ", values);
     setVisible(false);
     axios
       .post("https://cms.chtoma.com/api/students", values, {
@@ -84,7 +83,7 @@ export default function studentList() {
           Authorization:
             "Bearer " + JSON.parse(localStorage.getItem("cms")).token,
         },
-        params: Pagination,
+        params: pagination,
       })
       .then((res) => {
         const data = res.data.data;
@@ -94,7 +93,7 @@ export default function studentList() {
       .catch((err) => {
         console.log(err);
       });
-  }, [Pagination, query]);
+  }, [pagination, query]);
 
   const columns = [
     {
@@ -184,7 +183,11 @@ export default function studentList() {
             <TextLink
               title="Edit Student"
               onClick={() => {
-                setEditStudent(record);
+                form.setFieldsValue({
+                  // name: editStudent.name,
+                  // country: editStudent.country,
+                  // email: editStudent.email, 
+                });
                 setVisible(true);
               }}
             >
@@ -233,104 +236,15 @@ export default function studentList() {
           onClick={() => {
             setVisible(true);
           }}
+          onCancel={handleCancel}
         >
           Add
         </Button>
-        <Modal
-          title="Add Student"
+        <ModalForm 
           visible={visible}
-          onOk={() => {
-            form
-              .validateFields()
-              .then((values) => {
-                form.resetFields();
-                onCreate(values);
-              })
-              .catch((info) => {
-                console.log("Validate Failed:", info);
-              });
-          }}
-          onCancel={handleCancel}
-        >
-          <Form
-            form={form}
-            name="student_form"
-            initialValues={{
-              name: "name",
-              country: "area",
-              email: "email",
-            }}
-          >
-            <Form.Item
-              label="Name"
-              name="name"
-              placeholder="student name"
-              rules={[
-                {
-                  required: true,
-                  message: "name is required",
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="email"
-              label="Email"
-              placeholder="Please input email"
-              rules={[
-                {
-                  required: true,
-                  type:"email", 
-                  message: "email is required",
-                },
-                {
-                  message: "invalid email",
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="country"
-              label="Area"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Select
-                placeholder="Select an area"
-                onChange={(area) => {}}
-                allowClear
-              >
-                <Option value="China">China</Option>
-                <Option value="NZ">New Zealand</Option>
-                <Option value="Canada">Canada</Option>
-                <Option value="oz">Australia</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item
-              name="type"
-              label="Student Type"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Select
-                placeholder="Select a type"
-                onChange={(student) => {}}
-                allowClear
-              >
-                <Option value="ts">Tester</Option>
-                <Option value="dv">Developer</Option>
-              </Select>
-            </Form.Item>
-          </Form>
-        </Modal>
+          setVisible={setVisible}
+          onCreate={onCreate}
+        ></ModalForm>
         <Input
           placeholder="search by name"
           onSearch={(value) => {
@@ -353,14 +267,14 @@ export default function studentList() {
         columns={columns}
         dataSource={data}
         pagination={{
-          pageSize: Pagination.limit,
-          current: Pagination.page,
+          pageSize: pagination.limit,
+          current: pagination.page,
           total,
         }}
-        onChange={(paginator) => {
+        onChange={(paginators) => {
           setPagination({
-            page: paginator.current,
-            limit: paginator.pageSize,
+            page: paginators.current,
+            limit: paginators.pageSize,
           });
         }}
       />

@@ -55,7 +55,7 @@ export default function AppLayout(props) {
             <Menu.Item
               key="3"
               onClick={() => {
-                router.push("/students");
+                router.push("/dashboard/manager/students");
               }}
             >
               Student List
@@ -66,7 +66,7 @@ export default function AppLayout(props) {
             <Menu.Item
               key="4"
               onClick={() => {
-                router.push("/teachers");
+                router.push("/dashboard/manager/teachers");
               }}
             >
               Teacher List
@@ -77,7 +77,7 @@ export default function AppLayout(props) {
             <Menu.Item
               key="5"
               onClick={() => {
-                router.push("/courses");
+                router.push("/dashboard/manager/courses");
               }}
             >
               All Courses
